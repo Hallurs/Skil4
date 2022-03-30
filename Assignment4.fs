@@ -81,10 +81,7 @@ let swap r1 r2 =
 let rec mirror tref =
   match !tref with
   | RLf -> ()
-  | RBr (x, lref, rref) -> test Mirror(swap lref rref)
-      // match !lref with
-      // | RLf -> ()
-      // | RBr (y, llref, lrref) -> swap lref rref
+  | RBr (x, lref, rref) -> swap lref rref; mirror rref
 
 let testMirror (t : int tree) =
   let tref = makeRefTree t
