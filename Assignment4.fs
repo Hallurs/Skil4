@@ -77,9 +77,31 @@ let swap r1 r2 =
   r2 := x
 
 // Swap the left and right branches of each node, recursively
-// mirror : 'a refTree ref -> unit
+//mirror : 'a refTree ref -> unit
 let rec mirror tref =
-  failwith "Not implemented"
+  match !tref with
+  | RLf -> ()
+  | RBr (x, lref, rref) -> swap lref rref
+
+let testMirror (t : int tree) =
+  let tref = makeRefTree t
+  mirror tref;
+  freeze tref
+
+testMirror Lf;;
+// val it: int tree = Lf
+testMirror (Br (1, Lf, Lf));;
+// val it: int tree = Br (1, Lf, Lf)
+testMirror (Br (1, Br (2, Lf, Lf), Lf));;
+// val it: int tree = Br (1, Lf, Br (2, Lf, Lf))
+testMirror (Br (1, Br (2, Br (3, Lf, Lf), Lf), Lf));;
+// val it: int tree = Br (1, Lf, Br (2, Lf, Br (3, Lf, Lf)))
+testMirror (Br (1, Br (2, Br (3, Lf, Lf), Br (4, Lf, Lf)), Lf));;
+// val it: int tree = Br (1, Lf, Br (2, Br (4, Lf, Lf), Br (3, Lf, Lf)))
+testMirror (Br (1, Br (2, Br (3, Lf, Lf), Br (4, Lf, Lf)), Br (5, Lf, Lf)));;
+// val it: int tree = Br (1, Br (5, Lf, Lf), Br (2, Br (4, Lf, Lf), Br (3, Lf, Lf)))
+testMirror (Br (1, Br (2, Lf, Lf), Br (5, Lf, Lf)));;
+// val it: int tree = Br (1, Br (5, Lf, Lf), Br (2, Lf, Lf))
 
 // Do a single rotation (if possible)
 // rotate : 'a refTree ref -> unit
