@@ -111,10 +111,28 @@ let rotate tref =
     | RBr (x, lref, rref) ->
         match !lref with
         | RLf -> ()
-        | RBr (y, llref, lrref) ->
-            failwith "Not implemented"
+        | RBr (y, llref, lrref) -> swap tref lref; swap lref lrref
+            
 
+let testRotate (t : int tree) =
+  let tref = makeRefTree t
+  rotate tref;
+  freeze tref
 
+testRotate Lf;;
+// val it: int tree = Lf
+testRotate (Br (1, Lf, Lf));;
+// val it: int tree = Br (1, Lf, Lf)
+testRotate (Br (1, Br (2, Lf, Lf), Lf));;
+// val it: int tree = Br (2, Lf, Br (1, Lf, Lf))
+testRotate (Br (1, Br (2, Br (3, Lf, Lf), Lf), Lf));;
+// val it: int tree = Br (2, Br (3, Lf, Lf), Br (1, Lf, Lf))
+testRotate (Br (1, Br (2, Br (3, Lf, Lf), Br (4, Lf, Lf)), Lf));;
+// val it: int tree = Br (2, Br (3, Lf, Lf), Br (1, Br (4, Lf, Lf), Lf))
+testRotate (Br (1, Br (2, Br (3, Lf, Lf), Br (4, Lf, Lf)), Br (5, Lf, Lf)));;
+// val it: int tree = Br (2, Br (3, Lf, Lf), Br (1, Br (4, Lf, Lf), Br (5, Lf, Lf)))
+testRotate (Br (1, Br (2, Lf, Lf), Br (5, Lf, Lf)));;
+// val it: int tree = Br (2, Lf, Br (1, Lf, Br (5, Lf, Lf)))
 
 ////////////////////////////////////////////////////////////////////////
 // Problem 4                                                          //
