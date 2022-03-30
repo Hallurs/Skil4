@@ -81,7 +81,10 @@ let swap r1 r2 =
 let rec mirror tref =
   match !tref with
   | RLf -> ()
-  | RBr (x, lref, rref) -> swap lref rref
+  | RBr (x, lref, rref) -> test Mirror(swap lref rref)
+      // match !lref with
+      // | RLf -> ()
+      // | RBr (y, llref, lrref) -> swap lref rref
 
 let testMirror (t : int tree) =
   let tref = makeRefTree t
@@ -159,7 +162,8 @@ let rec exec stmt (store : naivestore) : naivestore =
         let rec loop ss sto =
             match ss with
             | []     -> sto
-            | s1::sr -> loop sr (exec s1 sto)
+            | s1::stmts -> loop stmts (exec s1 sto)
+            //| x -> getSto store (stmts, eval x sto)
         loop stmts store
     | While (e, stmt) ->
         let rec loop sto =
@@ -170,7 +174,6 @@ let rec exec stmt (store : naivestore) : naivestore =
 
 let run stmt = exec stmt emptystore |> ignore
 
-// The example program, can be executed with (run test)
 let test =
   Block("x",
     [ Assign ("x", Num 1)
@@ -183,14 +186,56 @@ let test =
     ; Print (Var "x")
     ])
 
+run (Block ("x", [Assign ("x", Num 1); Block ("x", [Print (Var "x")])]));;
+// 0
+// val it: unit = ()
 
+run (Block ("x", [Print (Var "x"); Assign ("x", Num 1); Block ("y", [Print (Var "x")])]));;
+// 0
+// 1
+// val it: unit = ()
+
+run (Block ("y", [Assign ("x", Num 5); Assign ("y", Num 6); Block ("y", [Print (Var "x"); Print (Var "y")])]));;
+// 5
+// 0
+// val it: unit = ()
+
+run (Block ("x", [Assign ("x", Num 1); Assign ("y", Num 2); Print (Var "y"); Block ("y", [Print (Var "y")]); Print (Var "y")]));;
+// 2
+// 0
+// 2
+// val it: unit = ()
+
+run (Block ("x", [Assign ("x", Num 10); Block ("x", [Assign ("x", Num 20); Block ("x", [Assign ("x", Num 30); Print (Var "x")]); Print (Var "x")]); Print (Var "x")]));;
+// 30
+// 20
+// 10
+// val it: unit = ()
+
+run (Block ("x", [Assign ("x", Num 10); Block ("x", [Assign ("x", Num 20); Block ("x", [Assign ("x", Num 30); Assign ("y", Plus (Var "y", Var "x"))]); Assign ("y", Plus (Var "y", Var "x"))]); Assign ("y", Plus (Var "y", Var "x")); Print (Var "y")]));;
+// 60
+// val it: unit = ()
 
 ////////////////////////////////////////////////////////////////////////
 // Problem 5                                                          //
 ////////////////////////////////////////////////////////////////////////
 
 (* ANSWER 5 HERE:
-    (i) h(1) prints: ...
-   (ii) h(0) prints: ...
+    (i) h(1) prints:
+    100
+    100
+    101
+    101
+    100
+    101
+    1
+   (ii) h(0) prints: 
+   100
+   100
+   101
+   101
+   100
+   101
+   100
 *)
 
