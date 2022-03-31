@@ -39,13 +39,13 @@ module Assignment4
 ////////////////////////////////////////////////////////////////////////
 
 (* ANSWER 2 HERE:
-    (i) t1 = ...
-        t2 = ...
-        t3 = ...
-        t4 = ...
-        t5 = ...
+    (i) t1 = f
+        t2 = fx
+        t3 = y(fx)
+        t4 = \y.y(fx)
+        t5 = \f.\y.y(fx)
 
-   (ii) t6 = ...
+   (ii) t6 = \x.\x.x
 *)
 
 
@@ -181,9 +181,9 @@ let rec exec stmt (store : naivestore) : naivestore =
     | Block (x, stmts) ->
         let rec loop ss sto =
             match ss with
-            | []     -> sto
-            | x -> loop x (eval x store) sto
-            | s1::stmts -> loop stmts (exec s1 sto)
+            | []        -> sto
+            | s1::stt-> loop stt (exec s1 sto)
+            | x -> loop  ((setSto store (x, eval (Var x) store)) sto)
         loop stmts store
     | While (e, stmt) ->
         let rec loop sto =
