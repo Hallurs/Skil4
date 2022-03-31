@@ -18,13 +18,18 @@ module Assignment4
 
 (* ANSWER 1 HERE:
      (i)   (\f. (\x. f (f x))) (\y. y) z
-           ...
+           ->(\x.f(fx))[(\y.y)z/f] -> (\x((\y.y)z)((\y.y)z)x)
+           -> (\y.y)z [(\y.y)z/x] -> (\y.y)z
+           -> y [z/y] -> z
 
     (ii)   (\g. g z) (\z. z) z
-           ...
+           -> rename gz [(\z.z)z/g] to gx[(\z.z)z/g]
+           -> (\z.z)zx -> z[zx/z] -> zx
 
    (iii)   (\h. h (\k. k z)) (\y. y y) z
-           ...
+           -> h(\k.kz) [(\y.yy)z/h]
+           -> (\y.yy)z(\k.kz) -> yy[z(\k.kz)/y]
+           -> z(\k.kz)z(\k.kz)
 *)
 
 
@@ -177,8 +182,8 @@ let rec exec stmt (store : naivestore) : naivestore =
         let rec loop ss sto =
             match ss with
             | []     -> sto
+            | x -> loop x (eval x store) sto
             | s1::stmts -> loop stmts (exec s1 sto)
-            //| x -> getSto store (stmts, eval x sto)
         loop stmts store
     | While (e, stmt) ->
         let rec loop sto =
